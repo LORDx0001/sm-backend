@@ -1,5 +1,8 @@
 from pathlib import Path
 from datetime import timedelta
+import os
+
+DOMAIN_NAME = os.getenv("DOMAIN_NAME")
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -99,6 +102,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'api.User'
 
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CSRF_TRUSTED_ORIGINS = [f"https://{DOMAIN_NAME}"]
 CORS_ALLOW_ALL_ORIGINS = True # Allow all origins for local network dev
 
 REST_FRAMEWORK = {
@@ -114,7 +121,3 @@ SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
-
-import os
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
