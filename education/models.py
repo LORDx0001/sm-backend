@@ -5,9 +5,12 @@ from django.conf import settings
 class LessonAnalysis(models.Model):
     STATUS_CHOICES = [
         ('pending', 'Pending — AI analyzed, awaiting grading'),
-        ('graded', 'Graded — O\'quv Bo\'limi graded'),
-        ('sent_to_dekanat', 'Sent to Dekanat'),
+        ('graded', 'Graded — O\'quv Bo\'limi graded (Internal)'),
+        ('sent_to_inspection', 'Sent to Inspection - Awaiting approval'),
+        ('returned_to_edu', 'Returned to Edu Dept - Inspection rejected'),
+        ('sent_to_dekanat', 'Sent to Dekanat - Inspection approved (Punishment)'),
         ('dekanat_ready', 'Dekanat Ready — document prepared for Rektor'),
+        ('ready_for_rector', 'Ready for Rector - Inspection approved (No Punishment)'),
         ('rector_signed', 'Rector Signed — executed'),
         ('archived', 'Archived — no action needed'),
     ]
@@ -55,6 +58,9 @@ class LessonAnalysis(models.Model):
     rector_signed = models.BooleanField(default=False)
     rector_comment = models.TextField(blank=True, null=True)
     rector_signed_at = models.DateTimeField(blank=True, null=True)
+
+    # --- Inspection ---
+    inspection_comment = models.TextField(blank=True, null=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
 

@@ -11,6 +11,8 @@ class User(AbstractUser):
         ('kadirlar', "Kadirlar Bo'limi"),
         ('kutubxona', 'Kutubxona'),
         ('ombor', 'Ombor'),
+        ('ai', 'AI'),
+        ('inspektsiya', 'Inspektsiya (Nazorat)'),
     ]
     role = models.CharField(max_length=20, choices=ROLE_CHOICES, default='tyuter')
     avatar = models.URLField(blank=True, null=True)

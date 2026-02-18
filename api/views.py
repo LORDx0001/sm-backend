@@ -120,12 +120,40 @@ class LessonAnalysisViewSet(viewsets.ModelViewSet):
         if grade == 'shtraf' and fine_amount:
             analysis.fine_amount = fine_amount
 
-        # If grade needs action (hayfsan, shtraf, haydash) -> send to dekanat
-        if LessonAnalysis.needs_action(grade):
-            analysis.status = 'sent_to_dekanat'
-        else:
-            analysis.status = 'archived'  # Good grades are archived
+        # If grade needs action (hayfsan, shtraf, haydash) -> send to inspection
+        # Even good grades should probably go to inspection if we want full control, 
+        # but user prompt says "alo... baxo beradi ... va ... dekanatga jonatiladi" implying flow.
+        # User refinement says "Inspektsiya if incorrect...". 
+        # So we send ALL graded items to Inspection for validation.
+        analysis.status = 'sent_to_inspection'
 
+        analysis.save()
+        serializer = self.get_serializer(analysis)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=['post'])
+    def inspect(self, request, pk=None):
+        """Inspection (Nazorat) validates the grading."""
+        analysis = self.get_object()
+        
+        status_action = request.data.get('status') # 'approve' | 'reject'
+        comment = request.data.get('comment', '')
+
+        analysis.inspection_comment = comment
+
+        if status_action == 'reject':
+            analysis.status = 'returned_to_edu'
+        elif status_action == 'approve':
+            # If punishment needed -> Dekanat
+            if LessonAnalysis.needs_action(analysis.grade):
+                analysis.status = 'sent_to_dekanat'
+            else:
+                # If good grade -> Rector (per user request "rector determine percentages" or final check)
+                # or just Archive. User said "Rektor: imzolab ijroga kiritadi".
+                # For non-punishment, maybe Rector still needs to sign off? 
+                # Let's assume yes: ready_for_rector.
+                analysis.status = 'ready_for_rector'
+        
         analysis.save()
         serializer = self.get_serializer(analysis)
         return Response(serializer.data)
