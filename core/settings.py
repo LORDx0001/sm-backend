@@ -102,10 +102,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'api.User'
 
-CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOW_ALL_ORIGINS = True
-CORS_ALLOW_CREDENTIALS = True
-CSRF_TRUSTED_ORIGINS = [f"https://{DOMAIN_NAME}"]
 CORS_ALLOW_ALL_ORIGINS = True # Allow all origins for local network dev
 
 REST_FRAMEWORK = {
